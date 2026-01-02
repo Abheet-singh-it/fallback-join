@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Team - GAMINN</title>
+    <meta name="description" content="Join a team on GAMINN - The ultimate esports platform">
+    
+    <!-- iOS Universal Links -->
+    <meta property="al:ios:app_store_id" content="123456789">
+    <meta property="al:ios:app_name" content="GAMINN">
+    <meta property="al:ios:url" content="gaminn://join/TOKEN_PLACEHOLDER">
+    
+    <!-- Android App Links -->
+    <meta property="al:android:package" content="com.krafton.gaminn">
+    <meta property="al:android:app_name" content="GAMINN">
+    <meta property="al:android:url" content="gaminn://join/TOKEN_PLACEHOLDER">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Join Team - GAMINN">
+    <meta property="og:description" content="Join a team on GAMINN - The ultimate esports platform">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Join Team - GAMINN">
+    <meta name="twitter:description" content="Join a team on GAMINN - The ultimate esports platform">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #050716 0%, #0D1324 100%);
+            color: #ECEDEE;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(13, 19, 36, 0.95);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 224, 255, 0.1);
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            border: 3px solid #00E0FF;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #ECEDEE;
+        }
+        
+        .team-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #00E0FF;
+            margin-bottom: 8px;
+        }
+        
+        .member-count {
+            font-size: 14px;
+            color: #9BA1A6;
+            margin-bottom: 24px;
+        }
+        
+        .description {
+            font-size: 14px;
+            color: #9BA1A6;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        
+        .button {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: #00E0FF;
+            color: #000000;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            margin-bottom: 12px;
+            transition: opacity 0.2s;
+        }
+        
+        .button:hover {
+            opacity: 0.9;
+        }
+        
+        .button:active {
+            opacity: 0.8;
+        }
+        
+        .button-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: #ECEDEE;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        
+        .app-store-links {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .app-store-links p {
+            font-size: 12px;
+            color: #9BA1A6;
+            margin-bottom: 12px;
+        }
+        
+        .store-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .store-button {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            color: #ECEDEE;
+            text-decoration: none;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        
+        .store-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .loading {
+            display: none;
+        }
+        
+        .error {
+            color: #FF6B6B;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎮</div>
+        <h1>Join Team on GAMINN</h1>
+        
+        <div id="content">
+            <div class="loading" id="loading">
+                <p>Loading team information...</p>
+            </div>
+            
+            <div id="team-info" style="display: none;">
+                <div class="team-name" id="team-name">Team Name</div>
+                <div class="member-count" id="member-count">0 members</div>
+                <p class="description">
+                    You've been invited to join this team! Open the GAMINN app to accept the invite.
+                </p>
+                
+                <a href="#" class="button" id="open-app-btn">Open in GAMINN App</a>
+                
+                <div class="app-store-links">
+                    <p>Don't have the app?</p>
+                    <div class="store-buttons">
+                        <a href="https://apps.apple.com/app/gaminn/id123456789" class="store-button" target="_blank">
+                            📱 App Store
+                        </a>
+                        <a href="https://play.google.com/store/apps/details?id=com.krafton.gaminn" class="store-button" target="_blank">
+                            📱 Play Store
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="error" class="error" style="display: none;">
+                Invalid or expired invite link.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Extract token from URL
+        const path = window.location.pathname;
+        const match = path.match(/\/join\/([^/?]+)/);
+        const token = match ? match[1] : null;
+        
+        // App Store URLs (update with actual IDs)
+        const APP_STORE_URL = 'https://apps.apple.com/app/gaminn/id123456789';
+        const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.krafton.gaminn';
+        
+        // Universal Link - will open app if installed
+        const UNIVERSAL_LINK = `https://gamin.xgaming.club/join/${token}`;
+        // Custom scheme fallback
+        const CUSTOM_SCHEME = `gaminn://join/${token}`;
+        
+        const loadingEl = document.getElementById('loading');
+        const teamInfoEl = document.getElementById('team-info');
+        const errorEl = document.getElementById('error');
+        const teamNameEl = document.getElementById('team-name');
+        const memberCountEl = document.getElementById('member-count');
+        const openAppBtn = document.getElementById('open-app-btn');
+        
+        // Detect device
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
+        const isMobile = isIOS || isAndroid;
+        
+        // Load team preview
+        async function loadTeamPreview() {
+            if (!token) {
+                showError('Invalid invite link');
+                return;
+            }
+            
+            try {
+                loadingEl.style.display = 'block';
+                
+                // Call API to get team preview (no auth required)
+                // Use the same API base URL as the app
+                const API_BASE_URL = 'https://gamin-api-staging-tuuscre5aa-uc.a.run.app';
+                const response = await fetch(`${API_BASE_URL}/teams/xts/${token}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load team');
+                }
+                
+                const data = await response.json();
+                
+                teamNameEl.textContent = data.name || 'Team';
+                memberCountEl.textContent = `${data.member_count || 0} ${data.member_count === 1 ? 'member' : 'members'}`;
+                
+                loadingEl.style.display = 'none';
+                teamInfoEl.style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading team:', error);
+                loadingEl.style.display = 'none';
+                showError('Failed to load team information');
+            }
+        }
+        
+        function showError(message) {
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+        
+        // Handle "Open in App" button
+        openAppBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (isMobile) {
+                // Try Universal Link first (works if app installed)
+                window.location.href = UNIVERSAL_LINK;
+                
+                // Fallback: Try custom scheme after a delay
+                setTimeout(() => {
+                    window.location.href = CUSTOM_SCHEME;
+                }, 300);
+                
+                // If still not opened, redirect to store after 2 seconds
+                setTimeout(() => {
+                    if (document.visibilityState === 'visible') {
+                        if (isIOS) {
+                            window.location.href = APP_STORE_URL;
+                        } else if (isAndroid) {
+                            window.location.href = PLAY_STORE_URL;
+                        }
+                    }
+                }, 2000);
+            } else {
+                // Desktop: Show store links
+                alert('Please open this link on your mobile device, or download the app from the app store.');
+            }
+        });
+        
+        // Auto-redirect on mobile if app might be installed
+        if (isMobile && token) {
+            // Try Universal Link first (will open app if installed)
+            window.location.href = UNIVERSAL_LINK;
+            
+            // Fallback: Try custom scheme after a short delay
+            setTimeout(() => {
+                window.location.href = CUSTOM_SCHEME;
+            }, 300);
+            
+            // Final fallback: Redirect to store if app doesn't open
+            setTimeout(() => {
+                // Only redirect if we're still on the page (app didn't open)
+                if (document.visibilityState === 'visible') {
+                    if (isIOS) {
+                        window.location.href = APP_STORE_URL;
+                    } else if (isAndroid) {
+                        window.location.href = PLAY_STORE_URL;
+                    }
+                }
+            }, 2000);
+        }
+        
+        // Load team preview
+        if (token) {
+            loadTeamPreview();
+        } else {
+            showError('Invalid invite link');
+        }
+    </script>
+</body>
+</html>
+
