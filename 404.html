@@ -216,9 +216,7 @@
         const APP_STORE_URL = 'https://apps.apple.com/app/gaminn/id123456789';
         const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.krafton.gaminn';
         
-        // Universal Link - will open app if installed
-        const UNIVERSAL_LINK = `https://gamin.xgaming.club/join/${token}`;
-        // Custom scheme fallback
+        // Custom scheme for deep linking
         const CUSTOM_SCHEME = `gaminn://join/${token}`;
         
         const loadingEl = document.getElementById('loading');
@@ -233,6 +231,10 @@
         const isAndroid = /Android/.test(navigator.userAgent);
         const isMobile = isIOS || isAndroid;
         
+        // Check if we've already tried auto-redirect (prevent loop)
+        const AUTO_REDIRECT_KEY = 'gaminn_auto_redirect_attempted';
+        const hasAttemptedRedirect = sessionStorage.getItem(AUTO_REDIRECT_KEY);
+        
         // Load team preview
         async function loadTeamPreview() {
             if (!token) {
@@ -244,7 +246,6 @@
                 loadingEl.style.display = 'block';
                 
                 // Call API to get team preview (no auth required)
-                // Use the same API base URL as the app
                 const API_BASE_URL = 'https://gamin-api-staging-tuuscre5aa-uc.a.run.app';
                 const response = await fetch(`${API_BASE_URL}/teams/xts/${token}`, {
                     method: 'GET',
@@ -277,56 +278,58 @@
             errorEl.style.display = 'block';
         }
         
-        // Handle "Open in App" button
-        openAppBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            if (isMobile) {
-                // Try Universal Link first (works if app installed)
-                window.location.href = UNIVERSAL_LINK;
-                
-                // Fallback: Try custom scheme after a delay
-                setTimeout(() => {
-                    window.location.href = CUSTOM_SCHEME;
-                }, 300);
-                
-                // If still not opened, redirect to store after 2 seconds
-                setTimeout(() => {
-                    if (document.visibilityState === 'visible') {
-                        if (isIOS) {
-                            window.location.href = APP_STORE_URL;
-                        } else if (isAndroid) {
-                            window.location.href = PLAY_STORE_URL;
-                        }
-                    }
-                }, 2000);
-            } else {
-                // Desktop: Show store links
+        // Try to open app
+        function tryOpenApp() {
+            if (!isMobile) {
                 alert('Please open this link on your mobile device, or download the app from the app store.');
+                return;
             }
-        });
-        
-        // Auto-redirect on mobile if app might be installed
-        if (isMobile && token) {
-            // Try Universal Link first (will open app if installed)
-            window.location.href = UNIVERSAL_LINK;
             
-            // Fallback: Try custom scheme after a short delay
-            setTimeout(() => {
-                window.location.href = CUSTOM_SCHEME;
-            }, 300);
+            // Mark that we've attempted redirect
+            sessionStorage.setItem(AUTO_REDIRECT_KEY, 'true');
             
-            // Final fallback: Redirect to store if app doesn't open
+            let appOpened = false;
+            
+            // Listen for page visibility change (app opened)
+            const visibilityHandler = () => {
+                if (document.hidden) {
+                    appOpened = true;
+                }
+            };
+            document.addEventListener('visibilitychange', visibilityHandler);
+            
+            // Try custom scheme
+            window.location.href = CUSTOM_SCHEME;
+            
+            // If app doesn't open in 2.5 seconds, redirect to store
             setTimeout(() => {
-                // Only redirect if we're still on the page (app didn't open)
-                if (document.visibilityState === 'visible') {
+                document.removeEventListener('visibilitychange', visibilityHandler);
+                
+                if (!appOpened && document.visibilityState === 'visible') {
+                    // App didn't open, redirect to store
                     if (isIOS) {
                         window.location.href = APP_STORE_URL;
                     } else if (isAndroid) {
                         window.location.href = PLAY_STORE_URL;
                     }
                 }
-            }, 2000);
+            }, 2500);
+        }
+        
+        // Handle "Open in App" button
+        openAppBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Clear the flag so user can try again
+            sessionStorage.removeItem(AUTO_REDIRECT_KEY);
+            tryOpenApp();
+        });
+        
+        // Auto-redirect ONLY ONCE on mobile
+        if (isMobile && token && !hasAttemptedRedirect) {
+            // Wait a moment for page to load, then try opening app
+            setTimeout(() => {
+                tryOpenApp();
+            }, 500);
         }
         
         // Load team preview
@@ -338,4 +341,3 @@
     </script>
 </body>
 </html>
-
